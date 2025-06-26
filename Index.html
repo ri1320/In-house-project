@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6fb; margin: 0; padding: 0; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 32px 24px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #2d3a4b; }
+        label { display: block; margin-bottom: 8px; color: #2d3a4b; }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 18px; border: 1px solid #cfd8dc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background: #4f8cff; color: #fff; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        .error { color: #e74c3c; text-align: center; margin-bottom: 10px; }
+        .assignments { margin-top: 24px; }
+        .assignments table { width: 100%; border-collapse: collapse; }
+        .assignments th, .assignments td { padding: 10px; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        .assignments th { background: #f0f4fa; }
+        .logout { margin-top: 20px; text-align: center; }
+        .logout button { width: auto; background: #e74c3c; }
+        .logout button:hover { background: #c0392b; }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-container">
+        <h2>Student Login</h2>
+        <div class="error" id="login-error" style="display:none;"></div>
+        <form id="login-form">
+            <label for="uid">Enter UID:</label>
+            <input type="text" id="uid" name="uid" required autocomplete="off">
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <div class="container" id="portal-container" style="display:none;">
+        <h2>Welcome, <span id="student-name"></span></h2>
+        <div class="assignments">
+            <h3>Your Assignments & Grades</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Assignment</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="assignments-table">
+                </tbody>
+            </table>
+        </div>
+        <div class="logout">
+            <button id="logout-btn">Logout</button>
+        </div>
+    </div>
+    <script src="Script.js"></script>
+    <script>
+        // Mock database
+        const students = {
+            '1001': { name: 'Alice Johnson', assignments: [ { title: 'Math Homework', grade: 'A' }, { title: 'Science Project', grade: 'B+' } ] },
+            '1002': { name: 'Bob Smith', assignments: [ { title: 'Math Homework', grade: 'B' }, { title: 'Science Project', grade: 'A-' } ] },
+            '1003': { name: 'Charlie Lee', assignments: [ { title: 'Math Homework', grade: 'C+' }, { title: 'Science Project', grade: 'B' } ] }
+        };
+
+        const loginForm = document.getElementById('login-form');
+        const loginContainer = document.getElementById('login-container');
+        const portalContainer = document.getElementById('portal-container');
+        const loginError = document.getElementById('login-error');
+        const studentName = document.getElementById('student-name');
+        const assignmentsTable = document.getElementById('assignments-table');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const uid = document.getElementById('uid').value.trim();
+            if (students[uid]) {
+                showPortal(uid);
+            } else {
+                loginError.textContent = 'Invalid UID. Please try again.';
+                loginError.style.display = 'block';
+            }
+        });
+
+        function showPortal(uid) {
+            loginContainer.style.display = 'none';
+            portalContainer.style.display = 'block';
+            loginError.style.display = 'none';
+            const student = students[uid];
+            studentName.textContent = student.name;
+            assignmentsTable.innerHTML = '';
+            student.assignments.forEach(a => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${a.title}</td><td>${a.grade}</td>`;
+                assignmentsTable.appendChild(row);
+            });
+        }
+
+        logoutBtn.addEventListener('click', function() {
+            portalContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+            loginForm.reset();
+        });
+    </script>
+</body>
+</html>
